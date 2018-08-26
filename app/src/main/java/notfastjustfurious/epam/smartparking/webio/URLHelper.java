@@ -13,5 +13,9 @@ public class URLHelper {
 
     public static final String EDIT_DEDICATED_USER = SERVER_URL + "edit_user.php";
 
+    public static final String LOGIN = SERVER_URL + "login_user.php";
+
+    public static final String REGISTER = SERVER_URL + "register_user.php";
+
 
 }

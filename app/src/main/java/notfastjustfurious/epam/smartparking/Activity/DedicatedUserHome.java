@@ -118,7 +118,7 @@ public class DedicatedUserHome extends AppCompatActivity {
             Log.d("isDelay", "is null");
         } else {
             lateButton.setVisibility(View.VISIBLE);
-            lateButton.setText("Opted to be late");
+            lateButton.setText("Applied to go late!");
             lateButton.setEnabled(false);
 
             dayCancelledButton.setVisibility(View.GONE);
@@ -130,7 +130,7 @@ public class DedicatedUserHome extends AppCompatActivity {
             Log.d("isFloat", "is null");
         } else {
             dayCancelledButton.setVisibility(View.VISIBLE);
-            dayCancelledButton.setText("Opted to not go today");
+            dayCancelledButton.setText("Applied for leave today!");
             dayCancelledButton.setEnabled(false);
             lateButton.setVisibility(View.GONE);
             lateButton.setEnabled(true);

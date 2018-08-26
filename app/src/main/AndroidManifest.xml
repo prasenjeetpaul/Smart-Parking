@@ -12,14 +12,17 @@
         android:usesCleartextTraffic="true"
         android:theme="@style/AppTheme">
         <activity android:name=".Activity.MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity android:name=".Activity.NormalUserHome" />
         <activity android:name=".Activity.DedicatedUserHome"></activity>
+        <activity android:name=".Activity.Login">
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+    </activity>
+        <activity android:name=".Activity.Register" />
     </application>
     <uses-permission android:name="android.permission.INTERNET" />
 

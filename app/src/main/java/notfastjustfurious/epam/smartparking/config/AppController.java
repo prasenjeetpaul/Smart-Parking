@@ -7,6 +7,8 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 
+import notfastjustfurious.epam.smartparking.utils.FontsOverride;
+
 public class AppController  extends Application {
     public static final String TAG = AppController.class.getSimpleName();
 
@@ -17,6 +19,7 @@ public class AppController  extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        FontsOverride.setDefaultFont(this, "MONOSPACE", "Quicksand-Medium.ttf");
         mInstance = this;
     }
 
