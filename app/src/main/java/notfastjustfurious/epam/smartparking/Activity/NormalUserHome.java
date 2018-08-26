@@ -96,7 +96,7 @@ public class NormalUserHome extends AppCompatActivity {
         StringRequest request = new StringRequest(Request.Method.POST, URLHelper.GET_SLOT_FILL_TIME, new Response.Listener<String>() {
             @Override
             public void onResponse(String string) {
-                avergaeFillTimeTV.setText("Average time to fill the parking area: "+ string);
+                avergaeFillTimeTV.setText("Predicted time to fill the parking area: "+ string);
                 avergaeFillTimeTV.setVisibility(View.VISIBLE);
             }
         }, new Response.ErrorListener() {
