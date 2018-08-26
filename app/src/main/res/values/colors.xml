@@ -8,4 +8,7 @@
     <color name="epamGraphite">#222222</color>
     <color name="epamWhite">#FFFFFF</color>
     <color name="epamCoral">#D35D47</color>
+    <color name="epamBrightBlue">#008ACE</color>
+    <color name="epamSharpBlue">#39C2D7</color>
+    <color name="epamDarkBlue">#263852</color>
 </resources>
