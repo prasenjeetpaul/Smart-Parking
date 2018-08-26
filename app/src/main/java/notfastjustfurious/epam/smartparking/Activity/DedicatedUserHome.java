@@ -3,10 +3,14 @@ package notfastjustfurious.epam.smartparking.Activity;
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -50,13 +54,37 @@ public class DedicatedUserHome extends AppCompatActivity {
         init();
         setOnClickListeners();
 
-        progress= new ProgressDialog(this);
+        progress = new ProgressDialog(this);
         progress.setTitle("Refreshing User");
         progress.setMessage("Contacting server for data...");
         progress.setCancelable(false);
-
+        connectToVacationAPI();
         loadUserData();
 
+    }
+    private void connectToVacationAPI() {
+        progress.show();
+        StringRequest request = new StringRequest(Request.Method.POST, URLHelper.VACATION_API, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String string) {
+
+                if(string.equals("Success")) {
+                    Log.d("VacationAPI", "Connected to Vacations API");
+                }
+                progress.dismiss();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError volleyError) {
+                Toast.makeText(DedicatedUserHome.this, "Some error occurred!!", Toast.LENGTH_SHORT).show();
+                Log.d("JSON Error", "Error occured while JSON Request");
+                Log.e("Volley Error", volleyError.getMessage());
+                progress.dismiss();
+            }
+        });
+
+        RequestQueue rQueue = Volley.newRequestQueue(DedicatedUserHome.this);
+        rQueue.add(request);
     }
 
     private void loadUserData() {
@@ -84,9 +112,8 @@ public class DedicatedUserHome extends AppCompatActivity {
                 }
         ) {
             @Override
-            protected Map<String, String> getParams()
-            {
-                Map<String, String>  params = new HashMap<String, String>();
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<String, String>();
 
                 params.put("empID", empID);
                 //params.put("domain", "http://itsalif.info");
@@ -104,17 +131,17 @@ public class DedicatedUserHome extends AppCompatActivity {
         this.loginTimeTV.setText(loginTime);
         this.logoutTimeTV.setText(logoutTime);
         Log.d("failedInst", userAttribute.getFailedInstanceNumber());
-        if(userAttribute.getFailedInstanceNumber().equals("0")){
+        if (userAttribute.getFailedInstanceNumber().equals("0")) {
             findViewById(R.id.failedInstanceMessage).setVisibility(View.GONE);
         } else {
             TextView failedInstanceTV = findViewById(R.id.failedInstanceMessage);
             failedInstanceTV.setVisibility(View.VISIBLE);
             int failCount = Integer.parseInt(userAttribute.getFailedInstanceNumber());
-            int refillCount = failCount*5;
-            failedInstanceTV.setText("You have "+failCount+" failed apperences \n" +
-                    "Your star refill limit is "+refillCount+" consequtive sucessful apperences");
+            int refillCount = failCount * 5;
+            failedInstanceTV.setText("You have " + failCount + " failed apperences \n" +
+                    "Your star refill limit is " + refillCount + " consequtive sucessful apperences");
         }
-        if(userAttribute.isDelay()==null){
+        if (userAttribute.isDelay() == null) {
             Log.d("isDelay", "is null");
         } else {
             lateButton.setVisibility(View.VISIBLE);
@@ -126,7 +153,7 @@ public class DedicatedUserHome extends AppCompatActivity {
             Log.d("isDelay", userAttribute.isDelay());
         }
 
-        if(userAttribute.getIsFloat()==null){
+        if (userAttribute.getIsFloat() == null) {
             Log.d("isFloat", "is null");
         } else {
             dayCancelledButton.setVisibility(View.VISIBLE);
@@ -143,7 +170,7 @@ public class DedicatedUserHome extends AppCompatActivity {
 
     private void init() {
         this.slotIDTV = findViewById(R.id.dedEmpIDTextView);
-        if(slotIDTV == null){
+        if (slotIDTV == null) {
             Log.d("slotIDTV", "Is Null :(");
         }
 
@@ -216,10 +243,10 @@ public class DedicatedUserHome extends AppCompatActivity {
                     protected Map<String, String> getParams() {
                         Map<String, String> params = new HashMap<String, String>();
                         params.put("empID", empID);
-                        if(loginTime!=null){
+                        if (loginTime != null) {
                             params.put("loginTime", loginTime);
                         }
-                        if(logoutTime!=null){
+                        if (logoutTime != null) {
                             params.put("logoutTime", logoutTime);
                         }
 
@@ -278,7 +305,7 @@ public class DedicatedUserHome extends AppCompatActivity {
                     @Override
                     public void onResponse(String response) {
                         //Toast.makeText(DedicatedUserHome.this, "User Data Recieved", Toast.LENGTH_SHORT).show();
-                        if(response.equals("Success")) {
+                        if (response.equals("Success")) {
                             Toast.makeText(DedicatedUserHome.this, "Slot Canceled for the day", Toast.LENGTH_SHORT).show();
                             loadUserData();
                         }
@@ -296,9 +323,8 @@ public class DedicatedUserHome extends AppCompatActivity {
                         }
                 ) {
                     @Override
-                    protected Map<String, String> getParams()
-                    {
-                        Map<String, String>  params = new HashMap<String, String>();
+                    protected Map<String, String> getParams() {
+                        Map<String, String> params = new HashMap<String, String>();
                         /*SharedPreferences sharedPreferences = getSharedPreferences("userinfo", Context.MODE_PRIVATE);
                         String empID = sharedPreferences.getString("empID", "100001");*/
                         params.put("empID", empID);
@@ -322,6 +348,7 @@ public class DedicatedUserHome extends AppCompatActivity {
 
     private String loginTime;
     private String logoutTime;
+
     private void getTimeForLoginTime() {
         displayChangeButton();
         Calendar mcurrentTime = Calendar.getInstance();
@@ -355,5 +382,32 @@ public class DedicatedUserHome extends AppCompatActivity {
         }, hour, minute, true);
         timePicker.setTitle("Update Logout Time");
         timePicker.show();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.options_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getTitle().toString().equalsIgnoreCase("logout")) {
+            //TODO Logout
+            SharedPreferences sharedPreferences = getSharedPreferences("loginInfo", Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString("loginStatus", false + "");
+            editor.commit();
+            startActivity(new Intent(DedicatedUserHome.this, Login.class));
+        } else {
+            Toast.makeText(this, "Under Development..!", Toast.LENGTH_SHORT).show();
+        }
+        return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        finishAffinity();
     }
 }

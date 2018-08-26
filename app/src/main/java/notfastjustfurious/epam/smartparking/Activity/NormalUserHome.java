@@ -1,14 +1,21 @@
 package notfastjustfurious.epam.smartparking.Activity;
 
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -34,6 +41,7 @@ public class NormalUserHome extends AppCompatActivity {
     private ListView openSlotListView;
     private ProgressDialog progress;
     private SwipeRefreshLayout pullToRefresh;
+    private TextView avergaeFillTimeTV;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,19 +55,66 @@ public class NormalUserHome extends AppCompatActivity {
             }
         });
         openSlotListView = findViewById(R.id.openSlotListView);
+        avergaeFillTimeTV = findViewById(R.id.averageFillTimeTextView);
         progress= new ProgressDialog(this);
         progress.setTitle("Fetching Open Slots");
         progress.setMessage("Wait while fetching the data...");
         progress.setCancelable(false); // disable dismiss by tapping outside of the dialog
 
+        connectToVacationAPI();
 
         populateOpenSlotListView();
 
 
     }
 
+    private void connectToVacationAPI() {
+        progress.show();
+        StringRequest request = new StringRequest(Request.Method.POST, URLHelper.VACATION_API, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String string) {
+                if(string.equals("Success")) {
+                    Log.d("VacationAPI", "Connected to Vacations API");
+                }
+                progress.dismiss();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError volleyError) {
+                Toast.makeText(NormalUserHome.this, "Some error occurred!!", Toast.LENGTH_SHORT).show();
+                Log.d("JSON Error", "Error occured while JSON Request");
+                Log.e("Volley Error", volleyError.getMessage());
+                progress.dismiss();
+            }
+        });
+
+        RequestQueue rQueue = Volley.newRequestQueue(NormalUserHome.this);
+        rQueue.add(request);
+    }
+
+    private void displayAverageFillTime() {
+        StringRequest request = new StringRequest(Request.Method.POST, URLHelper.GET_SLOT_FILL_TIME, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String string) {
+                avergaeFillTimeTV.setText("Average time to fill the parking area: "+ string);
+                avergaeFillTimeTV.setVisibility(View.VISIBLE);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError volleyError) {
+                Toast.makeText(NormalUserHome.this, "Some error occurred!!", Toast.LENGTH_SHORT).show();
+                Log.d("JSON Error", "Error occured while JSON Request");
+                Log.e("Volley Error", volleyError.getMessage());
+            }
+        });
+
+        RequestQueue rQueue = Volley.newRequestQueue(NormalUserHome.this);
+        rQueue.add(request);
+    }
+
     private void populateOpenSlotListView() {
         progress.show();
+        displayAverageFillTime();
         StringRequest request = new StringRequest(Request.Method.POST, URLHelper.GET_AVAILABLE_SLOT_URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String string) {
@@ -95,8 +150,6 @@ public class NormalUserHome extends AppCompatActivity {
         RequestQueue rQueue = Volley.newRequestQueue(NormalUserHome.this);
         rQueue.add(request);
 
-
-
     }
 
 
@@ -120,5 +173,32 @@ public class NormalUserHome extends AppCompatActivity {
         ViewGroup.LayoutParams params = listView.getLayoutParams();
         params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
         listView.setLayoutParams(params);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.options_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getTitle().toString().equalsIgnoreCase("logout")) {
+            //TODO Logout
+            SharedPreferences sharedPreferences = getSharedPreferences("loginInfo", Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString("loginStatus", false + "");
+            editor.commit();
+            startActivity(new Intent(NormalUserHome.this, Login.class));
+        } else {
+            Toast.makeText(this, "Under Development..!", Toast.LENGTH_SHORT).show();
+        }
+        return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        finishAffinity();
     }
 }

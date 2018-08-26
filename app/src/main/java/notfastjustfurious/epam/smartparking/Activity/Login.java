@@ -36,7 +36,7 @@ public class Login extends AppCompatActivity {
             }
         });
 
-        /*SharedPreferences sharedPreferences = getSharedPreferences("loginInfo", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getSharedPreferences("loginInfo", Context.MODE_PRIVATE);
         boolean loginStatus = Boolean.parseBoolean(sharedPreferences.getString("loginStatus", "false"));
         if (loginStatus) {
             SharedPreferences preferences = getSharedPreferences("userinfo",Context.MODE_PRIVATE);
@@ -45,7 +45,7 @@ public class Login extends AppCompatActivity {
                 startActivity(new Intent(Login.this,NormalUserHome.class));
             else
                 startActivity(new Intent(Login.this,DedicatedUserHome.class));
-        }*/
+        }
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -68,5 +68,10 @@ public class Login extends AppCompatActivity {
             new UserLogin().validateUser(userName, password, Login.this);
         else
             Toast.makeText(this, "Please fill all required Details", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onBackPressed() {
+        finishAffinity();
     }
 }
