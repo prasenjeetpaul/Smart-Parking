@@ -239,7 +239,7 @@
                     android:layout_weight="1"
                     android:background="@color/epamDarkBlue"
                     android:gravity="center"
-                    android:text="I'm Not comming today"
+                    android:text="I'm not coming in car!"
                     android:textColor="@color/epamWhite" />
 
             </LinearLayout>

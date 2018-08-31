@@ -157,7 +157,7 @@ public class DedicatedUserHome extends AppCompatActivity {
             Log.d("isFloat", "is null");
         } else {
             dayCancelledButton.setVisibility(View.VISIBLE);
-            dayCancelledButton.setText("Applied for leave today!");
+            dayCancelledButton.setText("You are not going by car toady");
             dayCancelledButton.setEnabled(false);
             lateButton.setVisibility(View.GONE);
             lateButton.setEnabled(true);
